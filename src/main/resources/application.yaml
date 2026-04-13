@@ -1,0 +1,81 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ova-api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedHeaders:
+              - "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=0
+
+        - id: voting-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/voting/**
+          filters:
+            - StripPrefix=0
+
+        - id: notification-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/notifications/**
+          filters:
+            - StripPrefix=0
+
+        - id: user-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/users/**
+          filters:
+            - StripPrefix=0
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:ThisIsAVerySecureSecretKeyForJWTTokenGenerationThatIsAtLeast256BitsLong}
+    expiration: 86400000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+  health:
+    gateway:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.ms.gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
