@@ -18,7 +18,8 @@ public class GatewayConfig {
         return builder.routes()
 
                 .route("auth-service", r -> r
-                        .path("/auth/**")
+                        .path("/api/auth/**")
+                        //.filters(f -> f.rewritePath("/auth/(?<segment>.*)", "/api/auth/${segment}"))
                         .uri("http://localhost:8081"))
 
                 .build();
