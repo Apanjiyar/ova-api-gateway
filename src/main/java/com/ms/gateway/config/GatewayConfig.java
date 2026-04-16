@@ -20,7 +20,7 @@ public class GatewayConfig {
                 .route("auth-service", r -> r
                         .path("/api/auth/**")
                         //.filters(f -> f.rewritePath("/auth/(?<segment>.*)", "/api/auth/${segment}"))
-                        .uri("http://localhost:8081"))
+                        .uri("lb://AUTH-SERVICE"))
 
                 .build();
     }
