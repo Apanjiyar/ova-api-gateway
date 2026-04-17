@@ -27,7 +27,6 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 
         String path = exchange.getRequest().getURI().getPath();
 
-        // Skip public APIs
         if (PUBLIC_ROUTES.stream().anyMatch(path::contains)) {
             return chain.filter(exchange);
         }
@@ -40,6 +39,11 @@ public class JwtAuthenticationFilter implements GatewayFilter {
         }
 
         String token = authHeader.substring(7);
+
+        if (jwtUtil.isTokenBlacklisted(token)) {
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+        }
 
         try {
             if (!jwtUtil.validateToken(token)) {
