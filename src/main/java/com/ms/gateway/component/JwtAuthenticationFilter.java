@@ -27,7 +27,8 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 
     private static final List<String> PUBLIC_ROUTES = List.of(
             "/auth/login",
-            "/auth/register"
+            "/auth/register",
+            "/auth/refresh"
     );
 
     @Override
